@@ -1,13 +1,12 @@
+#include <cstring>
 #include <iostream>
 #include "actor.h"
-//extern "C" {
-//#include "ansitty.h"
-//}
 #include "tty.h"
 #include "unistd.h"
 
 using std::cout;
 using std::endl;
+using std::memset;
 
 
 int main(int argc, char *argv[])
