@@ -35,7 +35,10 @@ tty.o: tty.cpp
 ansitty.o: ansitty.c
 	$(CC) $(CFLAGS) -c ansitty.c
 
-frogue: main.o object.o actor.o $(OGL_OBJS) ansitty.o tty.o
-	$(CXX) $(LFLAGS)  main.o object.o actor.o tty.o $(OGL_OBJS) ansitty.o -o frogue  
+firedemo.o: firedemo.c
+	$(CC) $(CFLAGS) -c firedemo.c
+
+frogue: main.o object.o actor.o $(OGL_OBJS) ansitty.o tty.o firedemo.o
+	$(CXX) $(LFLAGS)  firedemo.o main.o object.o actor.o tty.o $(OGL_OBJS) ansitty.o -o frogue  
 
 

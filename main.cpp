@@ -8,6 +8,11 @@ using std::cout;
 using std::endl;
 using std::memset;
 
+//extern int fireMain();
+extern "C" {
+	void fireMain(void);
+	};
+
 
 int main(int argc, char *argv[])
 {
@@ -37,22 +42,27 @@ int main(int argc, char *argv[])
     fclose(myfile);
 
     myTTY->puts("                         (development version only)\n");
-
+ 
+/*
     while (myTTY->getchar() == 0) {
     }
+*/
 
 		myTTY->puts("\x1b\x5B""2J");
 
 		//myTTY->puts("\x1b\x5B""?25l");
 
 		running = true;
+		/*
     while (running) {
-        /* main loop */
+				//
        	if(myTTY->getchar() != 0) {
 					running = false;
         }
 
     }
+		*/
+		fireMain();
 
     exit(0);
 }
