@@ -1,3 +1,5 @@
+#define _XOPEN_SOURCE 500
+
 #include <stdlib.h>
 #include <stdio.h>
 #include <stdint.h>
@@ -124,7 +126,7 @@ int spreadFire(uint32_t src) {
     if(pixel == 0) {
         firePixels[src - FIRE_WIDTH] = 0;
     } else {
-        uint32_t randIdx = (uint32_t) round(random() % 3) & (uint32_t )3;
+        uint32_t randIdx = (uint32_t) round(rand() % 3) & (uint32_t )3;
         uint32_t  dst = src - randIdx + 1;
         firePixels[dst - FIRE_WIDTH ] = pixel - (randIdx & 1);
     }

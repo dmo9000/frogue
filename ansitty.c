@@ -7,7 +7,6 @@
 #include "ansicanvas.h"
 #include "gfx_opengl.h"
 #include "bmf.h"
-#include "8x8.h"
 
 ANSICanvas *canvas = NULL;
 BitmapFont *myfont = NULL;
@@ -48,8 +47,11 @@ void *sysbus_rungraphics()
     gfx_opengl_main(canvas, gfx_opengl_getwidth(), gfx_opengl_getheight(), 1, "8btty");
     while (1) {
         /* don't busy wait */
+#ifndef __MINGW__
         pthread_yield();
-        //usleep(10000);
+#else
+				sched_yield();
+#endif
         sleep(30);
     }
 }
@@ -62,11 +64,9 @@ int ansitty_init()
     printf("ansitty_init()\r\n");
 
     font_filename = "bmf/8x8.bmf";
-
-    myfont = bmf_embedded(bmf_8x8_bmf);
-    //myfont = bmf_load(font_filename);
+    myfont = bmf_load(font_filename);
     if (!myfont) {
-        perror("couldn't get bmf font: ");
+        perror("bmf_load");
         exit(1);
     }
     fflush(NULL);
@@ -123,28 +123,20 @@ int ansitty_scroll(ANSICanvas *canvas)
     /* FIXME: TODO: free old head, there is a memory leak here */
     /* TODO: move this to a ansi_raster_delete() function in libansicanvas */
 
-    assert(d);
+    assert(d->bytes);
+    assert(d->chardata);
+    assert(d->fgcolors);
+    assert(d->bgcolors);
+    assert(d->attribs);
 
+    assert(raster_delete(d));
 
- //   if (!d->bytes) {
-				/* whoops! what's going on? extend the raster */
-	//			raster_extend_length_to(d, 80);
-		//		}
-
-        assert(d->bytes);
-        assert(d->chardata);
-        assert(d->fgcolors);
-        assert(d->bgcolors);
-        assert(d->attribs);
-        assert(raster_delete(d));
-
-        canvas->lines --;
-        //tty_y --;
-        tty_y = canvas->lines -1;
-        /* force refresh of entire canvas */
-
+    canvas->lines --;
+    //tty_y --;
+    tty_y = canvas->lines -1;
+    /* force refresh of entire canvas */
     canvas_reindex(canvas);
-    gfx_opengl_render_cursor(canvas, myfont, current_x,  current_y, false);
+
     gfx_opengl_hwscroll();
 
     canvas->is_dirty = true;
@@ -326,7 +318,6 @@ void output_character(char c)
         cy++;
         if (cy > 23 ) {
             /* hardware scroll required */
-            gfx_opengl_render_cursor(canvas, myfont, current_x,  current_y, false);
             gfx_opengl_hwscroll();
             cy = 23;
         }
@@ -338,7 +329,6 @@ void output_character(char c)
     }
     if (cy > 23 ) {
         /* hardware scroll required */
-        gfx_opengl_render_cursor(canvas, myfont, current_x,  current_y, false);
         gfx_opengl_hwscroll();
         cy = 23;
     }

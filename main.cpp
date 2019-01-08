@@ -3,6 +3,7 @@
 #include "actor.h"
 #include "tty.h"
 #include "unistd.h"
+#include "ansitty.h"
 
 using std::cout;
 using std::endl;
@@ -11,6 +12,7 @@ using std::memset;
 //extern int fireMain();
 extern "C" {
 	void fireMain(void);
+	void ansitty_canvas_setdirty(bool state);
 	};
 
 
@@ -49,6 +51,8 @@ int main(int argc, char *argv[])
 */
 
 		myTTY->puts("\x1b\x5B""2J");
+
+		ansitty_canvas_setdirty(true);
 
 		//myTTY->puts("\x1b\x5B""?25l");
 
